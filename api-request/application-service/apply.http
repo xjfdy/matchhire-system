@@ -1,0 +1,9 @@
+POST http://localhost:8082/applications
+Content-Type: application/json
+X-User-Id: 504ccf4a-e5f0-4dc9-837c-a95a5008adb8
+
+{
+  "jobId": "c3f5796b-c7e1-477d-a695-1287691f5ead",
+  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
+  "coverLetter": "I am interested in this position."
+}

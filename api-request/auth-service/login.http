@@ -1,0 +1,50 @@
+### Login as EMPLOYER
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "email": "apple@gmail.com",
+  "password": "newpassword456"
+}
+
+###
+
+### Login as CANDIDATE
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@gmail.com",
+  "password": "password123"
+}
+
+###
+
+### Test wrong password - should return 401
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "email": "apple@gmail.com",
+  "password": "wrongpassword"
+}
+
+###
+
+### Test wrong email - should return 404
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "email": "notexist@gmail.com",
+  "password": "password123"
+}
+
+### Login Employer
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "email": "employer@gmail.com",
+  "password": "Password123"
+}

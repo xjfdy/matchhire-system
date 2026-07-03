@@ -1,0 +1,10 @@
+PUT http://localhost:8081/auth/modify-profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsZUBnbWFpbC5jb20iLCJyb2xlIjoiRU1QTE9ZRVIiLCJpZCI6ImQyZDcwYTllLTZjNGYtNDk2OC1hNzQ3LTlmMGRhOWVkM2MyMyIsImlhdCI6MTc3OTU2OTIzOCwiZXhwIjoxNzc5NjA1MjM4fQ.Md-46Sg33ZT1FyFaUwVNxYE5iQbFIj9Iw_BfAYm0wM8
+Content-Type: application/json
+
+{
+  "email": "apple.updated@gmail.com",
+  "firstName": "Apple Updated",
+  "lastName": "HR Updated",
+  "bio": "Updated bio. Apple is hiring the best engineers."
+}

@@ -1,0 +1,10 @@
+services:
+  job-service-db:
+    image: postgres
+    container_name: job-service-db
+    environment:
+      POSTGRES_DB: job-service-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5000:5432"

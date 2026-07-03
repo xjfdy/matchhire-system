@@ -1,0 +1,5 @@
+### Delete a job - replace {id} with an actual job id
+DELETE http://localhost:8080/jobs/a298992f-e126-4ca3-81f0-84d232fd2fcf
+
+### Test wrong id - should return 404
+DELETE http://localhost:8080/jobs/00000000-0000-0000-0000-000000000000

@@ -1,0 +1,14 @@
+### Create a new job
+POST http://localhost:8080/jobs
+Content-Type: application/json
+
+{
+  "title": "Senior Java Developer",
+  "location": "New York, NY",
+  "jobType": "FULL_TIME",
+  "minSalary": 90000,
+  "maxSalary": 130000,
+  "description": "We are looking for a Senior Java Developer with Spring Boot and microservices experience.",
+  "remote": true,
+  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590"
+}

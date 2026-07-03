@@ -1,0 +1,13 @@
+### Update a job - replace {id} with an actual job id from your DB
+PUT http://localhost:8080/jobs/a298992f-e126-4ca3-81f0-84d232fd2fcf
+Content-Type: application/json
+
+{
+  "title": "Senior Java Developer Updated",
+  "location": "Los Angeles, CA",
+  "jobType": "FULL_TIME",
+  "minSalary": 100000,
+  "maxSalary": 150000,
+  "description": "Updated description. Looking for a Senior Java Developer with 5+ years of experience.",
+  "remote": false
+}

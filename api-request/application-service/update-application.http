@@ -1,0 +1,1 @@
+PUT http://localhost:8082/applications/00682868-dc06-40f1-9657-a0376155a93d/status?status=REVIEWED

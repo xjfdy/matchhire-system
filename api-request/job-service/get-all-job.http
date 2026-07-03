@@ -1,0 +1,8 @@
+### Get all jobs - default page 0, size 10
+GET http://localhost:8080/jobs
+
+### Get all jobs - page 0, size 5
+GET http://localhost:8080/jobs?page=0&size=5
+
+### Get all jobs - second page
+GET http://localhost:8080/jobs?page=1&size=5
