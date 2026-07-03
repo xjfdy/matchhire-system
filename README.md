@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # MatchHire System
 
 A microservices-based job matching and recruitment platform built with Spring Boot.
@@ -146,6 +145,4 @@ PENDING → REVIEWED → ACCEPTED
 - [ ] Resume upload
 - [ ] Candidate profile (skills, education, experience)
 - [ ] Admin dashboard
-=======
-# matchhire-system
->>>>>>> 8316dd7530cecfb137c0c1485e6079ef30936eb4
+
