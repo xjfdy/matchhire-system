@@ -1,2 +1,12 @@
-GET http://localhost:8082/applications/my
+#GET http://localhost:8082/applications/my
+#X-User-Id: 504ccf4a-e5f0-4dc9-837c-a95a5008adb8
+#
+
+POST http://localhost:8082/applications
+Content-Type: application/json
 X-User-Id: 504ccf4a-e5f0-4dc9-837c-a95a5008adb8
+
+{
+  "jobId": "9250cb60-9013-4417-b21c-085ad31aec41",
+  "coverLetter": "I am interested in this position."
+}

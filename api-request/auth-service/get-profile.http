@@ -1,3 +1,7 @@
 ### Get current user profile
 GET http://localhost:8081/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbXBsb3llckBnbWFpbC5jb20iLCJyb2xlIjoiRU1QTE9ZRVIiLCJpZCI6ImQ2YWYyZjJlLWE1MTUtNGU4NC1iYjY4LTg1NzMxMThlMDU5MCIsImlhdCI6MTc4Mjc2MTU2NSwiZXhwIjoxNzgyNzk3NTY1fQ.vMql8f_NoB6Kih4IeeKL2dZi1Rj1lCP5by7-_XvGnGo"
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJDQU5ESURBVEUiLCJpZCI6IjhiZjVmYzg0LWYxOTctNDU1OS1hMGQxLTlmNTZkNGVmYjI3OSIsImlhdCI6MTc4MzIwMzkyNCwiZXhwIjoxNzgzMjM5OTI0fQ.K37CfMk2cKgs__QziG2VMPwEL9GvNL31Hc3-lIgK29Y
+
+### Get current user profile with wrong token
+GET http://localhost:8081/auth/me
+Authorization: Bearer invalidToken
