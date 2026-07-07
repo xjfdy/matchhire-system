@@ -1,53 +1,10 @@
-### Register as EMPLOYER
-POST http://localhost:8081/auth/register
+POST http://localhost:8083/auth/register
 Content-Type: application/json
 
 {
-  "email": "apple@gmail.com",
-  "password": "password123",
-  "firstName": "Apple",
-  "lastName": "HR",
-  "bio": "Apple is looking for talented engineers to join our team.",
-  "userType": "EMPLOYER"
-}
-
-###
-
-### Register as CANDIDATE
-POST http://localhost:8081/auth/register
-Content-Type: application/json
-
-{
-  "email": "alice@gmail.com",
-  "password": "password123",
-  "firstName": "Alice",
-  "lastName": "Wong",
-  "bio": "Full stack developer with 3 years of experience.",
-  "userType": "CANDIDATE"
-}
-
-###
-
-### Test duplicate email - should return 409 Conflict
-POST http://localhost:8081/auth/register
-Content-Type: application/json
-
-{
-  "email": "apple@gmail.com",
-  "password": "password123",
-  "firstName": "Apple",
-  "lastName": "HR",
-  "userType": "EMPLOYER"
-}
-
-### Register Employer
-POST http://localhost:8081/auth/register
-Content-Type: application/json
-
-{
-  "email": "employer@gmail.com",
+  "email": "test@gmail.com",
   "password": "Password123",
-  "firstName": "Bob",
-  "lastName": "Smith",
-  "userType": "EMPLOYER"
+  "firstName": "Test",
+  "lastName": "User",
+  "userType": "CANDIDATE"
 }
