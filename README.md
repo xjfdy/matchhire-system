@@ -9,7 +9,7 @@ A microservices-based job matching and recruitment platform built with Spring Bo
 | auth-service | ✅ Complete |
 | job-service | ✅ Complete |
 | application-service | ✅ Complete |
-| api-gateway | 🚧 In Progress |
+| api-gateway | ✅ Complete |
 | matching-service | 📋 Planned |
 | notification-service | 📋 Planned |
 
@@ -63,15 +63,20 @@ Handles job applications submitted by candidates.
 | PUT | `/applications/{id}/status` | Update application status |
 | DELETE | `/applications/{id}` | Withdraw an application |
 
-### API Gateway 🚧
+### API Gateway
 Single entry point for all services. Validates JWT and injects `X-User-Id` header before forwarding requests to downstream services.
 
 ### Matching Service 📋
-Planned service to calculate match scores between candidates and job postings based on skills, experience, and location.
+Planned service to calculate match scores between candidates and job postings based on skills, experience, and location. Will consume candidate/job data via gRPC from auth-service and job-service.
 
 ### Notification Service 📋
 Planned service to consume Kafka events and send email notifications on application submission and status changes.
 
+## Inter-Service Communication
+
+- **REST** — external clients (via API Gateway) talk to each service over HTTP
+- **gRPC** — synchronous service-to-service calls where an immediate response is required (e.g. application-service fetching job/employer details from job-service before saving an application)
+- **Kafka** — asynchronous, event-driven communication for things other services may care about without blocking the request (e.g. application-service publishing `SUBMITTED` / `STATUS_CHANGED` events on the `application-events` topic)
 ## Tech Stack
 
 - **Java 17**
@@ -135,14 +140,13 @@ PENDING → REVIEWED → ACCEPTED
 | CANDIDATE | Job seeker |
 | EMPLOYER | Company / recruiter posting jobs |
 
-## Planned Features
 
-- [ ] API Gateway JWT validation and routing
-- [ ] gRPC integration (application-service → job-service for employer ID lookup)
-- [ ] Kafka event notifications on application submit and status change
+## Planned Features
+- [ ] Matching service (skill-based recommendations with match score, gRPC calls to auth-service and job-service)
 - [ ] Notification service (email alerts via Kafka consumer)
-- [ ] Matching service (skill-based recommendations with match score)
 - [ ] Resume upload
-- [ ] Candidate profile (skills, education, experience)
+- [ ] Candidate profile — skills field (prerequisite for matching-service)
+- [ ] Job posting — required skills field (prerequisite for matching-service)
 - [ ] Admin dashboard
+- [ ] Job search/filter endpoint (separate from matching — explicit user-driven query vs. system-computed recommendations)
 
