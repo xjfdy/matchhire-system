@@ -4,4 +4,4 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsInJvb
 
 ### Get current user profile with wrong token
 GET http://localhost:8081/auth/me
-Authorization: Bearer invalidToken
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXRjaGluZy50ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJDQU5ESURBVEUiLCJpZCI6IjViOTRjYmJiLTBkOTctNGY1OC05OWVjLWFkNTlkMGI5YzM2NCIsImlhdCI6MTc4MzUzNjgxMywiZXhwIjoxNzgzNTcyODEzfQ.-GuT8HE1OWInMAN3mqpI43S-r1pHjaNvCKgVW94a344

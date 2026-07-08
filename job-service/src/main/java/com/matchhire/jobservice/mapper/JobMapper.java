@@ -23,6 +23,7 @@ public class JobMapper {
         jobResponse.setUpdatedAt(job.getUpdatedAt().toString());
         jobResponse.setClosedAt(
                 job.getClosedAt() != null ? job.getClosedAt().toString() : null);
+        jobResponse.setRequiredSkills(job.getRequiredSkills());
 
         return jobResponse;
     }
@@ -37,6 +38,7 @@ public class JobMapper {
         job.setDescription(jobRequest.getDescription());
         job.setRemote(jobRequest.getRemote());
         job.setEmployerId(jobRequest.getEmployerId());
+        job.setRequiredSkills(jobRequest.getRequiredSkills());
 
         return job;
     }

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public class RegisterRequest {
 
     @NotBlank
@@ -29,6 +31,8 @@ public class RegisterRequest {
 
     @NotNull
     private UserType userType;
+
+    private List<String> skills;
 
     public String getEmail() {
         return email;
@@ -76,5 +80,13 @@ public class RegisterRequest {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public List<String> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<String> skills) {
+        this.skills = skills;
     }
 }

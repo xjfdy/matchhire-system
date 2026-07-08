@@ -4,6 +4,7 @@ import com.matchhire.authservice.model.User;
 import com.matchhire.authservice.repository.UserRepository;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import org.springframework.transaction.annotation.Transactional;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImpl
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void getUserById(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         try {
             UUID id = UUID.fromString(request.getId());

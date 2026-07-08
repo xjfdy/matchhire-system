@@ -1,5 +1,6 @@
 package com.matchhire.jobservice.dto;
 
+import java.util.List;
 import java.util.UUID;
 
 public class JobResponse {
@@ -16,6 +17,7 @@ public class JobResponse {
     private String createdAt;
     private String updatedAt;
     private String closedAt;
+    private List<String> requiredSkills;
 
     public String getEmployerId() {
         return employerId;
@@ -111,5 +113,13 @@ public class JobResponse {
 
     public void setClosedAt(String closedAt) {
         this.closedAt = closedAt;
+    }
+
+    public List<String> getRequiredSkills() {
+        return requiredSkills;
+    }
+
+    public void setRequiredSkills(List<String> requiredSkills) {
+        this.requiredSkills = requiredSkills;
     }
 }

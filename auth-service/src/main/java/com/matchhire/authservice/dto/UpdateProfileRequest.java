@@ -3,6 +3,8 @@ package com.matchhire.authservice.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public class UpdateProfileRequest {
 
     @Email(message = "Email should be valid")
@@ -16,6 +18,8 @@ public class UpdateProfileRequest {
 
     @Size(max = 2000)
     private String bio;
+
+    private List<String> skills;
 
     public String getEmail() {
         return email;
@@ -47,5 +51,13 @@ public class UpdateProfileRequest {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public List<String> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<String> skills) {
+        this.skills = skills;
     }
 }

@@ -78,6 +78,7 @@ public class AuthServiceImpl implements AuthService {
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
         if (request.getLastName() != null) user.setLastName(request.getLastName());
         if (request.getBio() != null) user.setBio(request.getBio());
+        if (request.getSkills() != null) user.setSkills(request.getSkills());
 
         User updatedUser = userRepository.save(user);
         return UserMapper.toResponse(updatedUser);
