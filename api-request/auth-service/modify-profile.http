@@ -1,5 +1,9 @@
 ### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=IntelliJ IDEA
+PUT http://localhost:8081/auth/modify-profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXRjaGluZy50ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJDQU5ESURBVEUiLCJpZCI6IjViOTRjYmJiLTBkOTctNGY1OC05OWVjLWFkNTlkMGI5YzM2NCIsImlhdCI6MTc4MzUzNjgxMywiZXhwIjoxNzgzNTcyODEzfQ.-GuT8HE1OWInMAN3mqpI43S-r1pHjaNvCKgVW94a344
+Content-Type: application/json
 
+{
+  "skills": ["Java", "Spring", "SQL"]
+}
 ###

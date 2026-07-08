@@ -1,14 +1,47 @@
-### Create a new job
+### Job 1 - Java backend, overlaps with candidate skills
 POST http://localhost:8080/jobs
 Content-Type: application/json
 
 {
-  "title": "Senior Java Developer",
-  "location": "New York, NY",
+  "title": "Backend Software Engineer",
+  "location": "Toronto, ON",
+  "jobType": "FULL_TIME",
+  "minSalary": 80000,
+  "maxSalary": 110000,
+  "description": "Looking for a backend engineer with Java and Spring experience.",
+  "remote": true,
+  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
+  "requiredSkills": ["Java", "Spring", "SQL"]
+}
+
+### Job 2 - full overlap, should score highest
+POST http://localhost:8080/jobs
+Content-Type: application/json
+
+{
+  "title": "Java Microservices Developer",
+  "location": "Remote",
   "jobType": "FULL_TIME",
   "minSalary": 90000,
   "maxSalary": 130000,
-  "description": "We are looking for a Senior Java Developer with Spring Boot and microservices experience.",
+  "description": "Build and maintain microservices using Java, Spring Boot, and Kafka.",
   "remote": true,
-  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590"
+  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
+  "requiredSkills": ["Java", "Spring", "Kafka"]
+}
+
+### Job 3 - no overlap, should score 0
+POST http://localhost:8080/jobs
+Content-Type: application/json
+
+{
+  "title": "Frontend Developer",
+  "location": "Vancouver, BC",
+  "jobType": "FULL_TIME",
+  "minSalary": 70000,
+  "maxSalary": 100000,
+  "description": "Looking for a frontend developer skilled in React and TypeScript.",
+  "remote": false,
+  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
+  "requiredSkills": ["React", "TypeScript", "CSS"]
 }

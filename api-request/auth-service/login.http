@@ -2,6 +2,6 @@ POST http://localhost:8083/auth/login
 Content-Type: application/json
 
 {
-  "email": "test@gmail.com",
+  "email": "matching.test@gmail.com",
   "password": "Password123"
 }
