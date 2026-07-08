@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -36,6 +37,8 @@ public class JobRequest {
     private String description;
 
     private Boolean remote;
+
+    private List<String> requiredSkills;
 
     public UUID getEmployerId() {
         return employerId;
@@ -99,5 +102,13 @@ public class JobRequest {
 
     public void setRemote(Boolean remote) {
         this.remote = remote;
+    }
+
+    public List<String> getRequiredSkills() {
+        return requiredSkills;
+    }
+
+    public void setRequiredSkills(List<String> requiredSkills) {
+        this.requiredSkills = requiredSkills;
     }
 }

@@ -7,6 +7,7 @@ option java_multiple_files = true;
 
 service JobGrpcService {
   rpc GetJobById (JobRequest) returns (JobResponse);
+  rpc GetAllJobs (GetAllJobsRequest) returns (GetAllJobsResponse);
 }
 
 message JobRequest {
@@ -17,4 +18,12 @@ message JobResponse {
   string id = 1;
   string employerId = 2;
   string title = 3;
+  repeated string requiredSkills = 4;
+}
+
+message GetAllJobsRequest {
+}
+
+message GetAllJobsResponse {
+  repeated JobResponse jobs = 1;
 }

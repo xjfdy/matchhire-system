@@ -59,6 +59,7 @@ public class JobServiceImpl implements JobService {
         job.setDescription(jobRequest.getDescription());
         job.setRemote(jobRequest.getRemote());
         job.setUpdatedAt(LocalDate.now());
+        job.setRequiredSkills(jobRequest.getRequiredSkills());
 
         Jobs savedJob = jobRepository.save(job);
         return JobMapper.toDTO(savedJob);

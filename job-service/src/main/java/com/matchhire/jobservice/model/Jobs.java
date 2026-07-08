@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -39,6 +40,9 @@ public class Jobs {
     private UUID employerId;
 
     private Boolean remote;
+
+    @ElementCollection
+    private List<String> requiredSkills;
 
     private LocalDate createdAt;
 
@@ -140,6 +144,14 @@ public class Jobs {
 
     public void setClosedAt(LocalDate closedAt) {
         this.closedAt = closedAt;
+    }
+
+    public List<String> getRequiredSkills() {
+        return requiredSkills;
+    }
+
+    public void setRequiredSkills(List<String> requiredSkills) {
+        this.requiredSkills = requiredSkills;
     }
 }
 

@@ -5,7 +5,9 @@ import com.matchhire.jobservice.repository.JobRepository;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @GrpcService
@@ -17,6 +19,7 @@ public class JobGrpcServiceImpl extends JobGrpcServiceGrpc.JobGrpcServiceImplBas
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void getJobById(JobRequest request, StreamObserver<JobResponse> responseObserver) {
         try {
             UUID id = UUID.fromString(request.getId());
@@ -25,19 +28,28 @@ public class JobGrpcServiceImpl extends JobGrpcServiceGrpc.JobGrpcServiceImplBas
                             .withDescription("Job not found with ID: " + id)
                             .asRuntimeException());
 
-            JobResponse response = JobResponse.newBuilder()
-                    .setId(job.getId().toString())
-                    .setEmployerId(job.getEmployerId().toString())
-                    .setTitle(job.getTitle())
-                    .build();
-
-            responseObserver.onNext(response);
+            responseObserver.onNext(JobGrpcMapper.toGrpcResponse(job));
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
             responseObserver.onError(Status.INVALID_ARGUMENT
                     .withDescription("Invalid UUID format")
                     .asRuntimeException());
-
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void getAllJobs(GetAllJobsRequest request, StreamObserver<GetAllJobsResponse> responseObserver) {
+        List<JobResponse> jobResponses = jobRepository.findAll()
+                .stream()
+                .map(JobGrpcMapper::toGrpcResponse)
+                .toList();
+
+        GetAllJobsResponse response = GetAllJobsResponse.newBuilder()
+                .addAllJobs(jobResponses)
+                .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 }
