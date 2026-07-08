@@ -17,6 +17,7 @@ public class UserMapper {
         user.setPassword(encodedPassword);
         user.setUserType(request.getUserType());
         user.setCreatedAt(LocalDateTime.now());
+        user.setSkills(request.getSkills());
         return user;
     }
 
@@ -29,6 +30,7 @@ public class UserMapper {
         response.setBio(user.getBio());
         response.setUserType(user.getUserType().toString());
         response.setCreatedAt(user.getCreatedAt().toString());
+        response.setSkills(user.getSkills().toString());
         return response;
     }
 }

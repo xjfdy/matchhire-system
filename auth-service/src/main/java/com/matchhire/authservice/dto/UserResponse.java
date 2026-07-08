@@ -9,6 +9,7 @@ public class UserResponse {
     private String bio;
     private String userType;
     private String createdAt;
+    private String skills;
 
     public String getId() {
         return id;
@@ -64,5 +65,13 @@ public class UserResponse {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getSkills() {
+        return skills;
+    }
+
+    public void setSkills(String skills) {
+        this.skills = skills;
     }
 }
