@@ -13,9 +13,6 @@ public class ApplicationRequest {
     @Size(max = 2000, message = "Cover letter cannot exceed 2000 characters")
     private String coverLetter;
 
-    @NotNull(message = "Employer ID is required")
-    private UUID employerId;
-
     private String resumeUrl;
 
     public UUID getJobId() {
@@ -32,14 +29,6 @@ public class ApplicationRequest {
 
     public void setCoverLetter(String coverLetter) {
         this.coverLetter = coverLetter;
-    }
-
-    public UUID getEmployerId() {
-        return employerId;
-    }
-
-    public void setEmployerId(UUID employerId) {
-        this.employerId = employerId;
     }
 
     public String getResumeUrl() {
