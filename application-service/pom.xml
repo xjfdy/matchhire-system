@@ -59,7 +59,7 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- gRPC — 用这个替换之前的 grpc-client-spring-boot-starter -->
+        <!-- gRPC -->
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-spring-boot-starter</artifactId>
