@@ -37,7 +37,7 @@ public class MatchingServiceImpl implements MatchingService {
         return new JobMatchResponse(job.getId(), job.getTitle(), job.getEmployerId(), score);
     }
 
-    private double calculateMatchScore(List<String> candidateSkills, List<String> jobRequiredSkills) {
+    static double calculateMatchScore(List<String> candidateSkills, List<String> jobRequiredSkills) {
         if(jobRequiredSkills.isEmpty()) {
             return 0.0;
         }
