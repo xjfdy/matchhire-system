@@ -11,7 +11,7 @@ A microservices-based job matching and recruitment platform built with Spring Bo
 | application-service | ✅ Complete |
 | api-gateway | ✅ Complete |
 | matching-service | ✅ Complete |
-| notification-service | 📋 Planned |
+| notification-service | ✅ Complete |
 
 ## Architecture
 
@@ -26,12 +26,16 @@ Auth Service   Job Service   Application Service   Matching Service
 PostgreSQL    PostgreSQL          PostgreSQL          (no DB — calls
 (port 5001)   (port 5000)         (port 5002)          job/auth via gRPC)
 
+                                    ↓
+                          Notification Service (port 8085)
+                          (no DB — Kafka consumer only)
+
 gRPC:  application-service → job-service (employer lookup)
        matching-service    → job-service (all jobs + required skills)
        matching-service    → auth-service (candidate skills)
 
 Kafka: application-service publishes application-events
-       (SUBMITTED / STATUS_CHANGED) — consumed by future notification-service
+       (SUBMITTED / STATUS_CHANGED) — consumed by notification-service
 ```
 
 ## Services
@@ -88,14 +92,23 @@ Computes skill-based match scores between a candidate and all open jobs, and ret
 
 Match score = (number of overlapping skills) / (number of skills required by the job).
 
-### Notification Service 📋
-Planned service to consume Kafka events and send email notifications on application submission and status changes.
+### Notification Service
+Consumes `application-events` from Kafka and simulates sending notifications (logged) when an application is submitted or its status changes. Stateless — no database, no REST API, purely a Kafka consumer.
 
 ## Inter-Service Communication
 
 - **REST** — external clients (via API Gateway) talk to each service over HTTP
 - **gRPC** — synchronous service-to-service calls where an immediate response is required (e.g. application-service fetching job/employer details from job-service before saving an application; matching-service fetching candidate skills and job data on demand)
-- **Kafka** — asynchronous, event-driven communication for things other services may care about without blocking the request (e.g. application-service publishing `SUBMITTED` / `STATUS_CHANGED` events on the `application-events` topic)
+- **Kafka** — asynchronous, event-driven communication for things other services may care about without blocking the request (e.g. application-service publishing `SUBMITTED` / `STATUS_CHANGED` events on the `application-events` topic, consumed independently by notification-service)
+
+## Testing
+
+Unit and integration tests using JUnit 5 and Mockito, covering:
+
+- **Pure logic** — e.g. matching-service's skill-overlap scoring algorithm
+- **Service layer (Mockito)** — business rules such as duplicate application detection, application withdrawal rules, and status-change event publishing, with gRPC clients and repositories mocked
+- **Security filters (Mockito)** — JWT validation and request wrapping in api-gateway's `JwtAuthFilter`
+- **Controller layer (MockMvc)** — HTTP status codes and error handling, e.g. job-service returning 404 for a missing job
 
 ## Tech Stack
 
@@ -107,6 +120,7 @@ Planned service to consume Kafka events and send email notifications on applicat
 - **PostgreSQL** (via Docker)
 - **Apache Kafka** (KRaft mode, single-node, via Docker)
 - **gRPC** (net.devh grpc-spring-boot-starter)
+- **JUnit 5 + Mockito** (unit/integration testing)
 
 ## Prerequisites
 
@@ -137,6 +151,7 @@ Start each Spring Boot application:
 3. `application-service` — port 8082, gRPC 9090
 4. `api-gateway` — port 8083
 5. `matching-service` — port 8084 (gRPC client only, no server)
+6. `notification-service` — port 8085 (Kafka consumer only, no gRPC)
 
 ### 3. Test the API
 
@@ -165,7 +180,8 @@ PENDING → REVIEWED → ACCEPTED
 
 ## Planned Features
 
-- [ ] Notification service (email alerts via Kafka consumer)
 - [ ] Resume upload
 - [ ] Job search/filter endpoint (separate from matching — explicit user-driven query vs. system-computed recommendations)
 - [ ] Admin dashboard
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Kubernetes deployment

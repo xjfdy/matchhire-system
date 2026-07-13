@@ -2,14 +2,17 @@ package com.matchhire.applicationservice.service.impl;
 
 import com.matchhire.applicationservice.dto.ApplicationRequest;
 import com.matchhire.applicationservice.dto.ApplicationResponse;
+import com.matchhire.applicationservice.event.ApplicationEventProducer;
 import com.matchhire.applicationservice.exception.ApplicationNotFoundException;
 import com.matchhire.applicationservice.exception.DuplicateApplicationException;
 import com.matchhire.applicationservice.exception.UnauthorizedException;
+import com.matchhire.applicationservice.grpc.JobGrpcClient;
 import com.matchhire.applicationservice.mapper.ApplicationMapper;
 import com.matchhire.applicationservice.model.Application;
 import com.matchhire.applicationservice.model.ApplicationStatus;
 import com.matchhire.applicationservice.repository.ApplicationRepository;
 import com.matchhire.applicationservice.service.ApplicationService;
+import com.matchhire.jobservice.grpc.JobResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,9 +23,15 @@ import java.util.UUID;
 public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final JobGrpcClient jobGrpcClient;
+    private final ApplicationEventProducer applicationEventProducer;
 
-    public ApplicationServiceImpl(ApplicationRepository applicationRepository) {
+    public ApplicationServiceImpl(ApplicationRepository applicationRepository,
+                                  JobGrpcClient jobGrpcClient,
+                                  ApplicationEventProducer applicationEventProducer) {
         this.applicationRepository = applicationRepository;
+        this.jobGrpcClient = jobGrpcClient;
+        this.applicationEventProducer = applicationEventProducer;
     }
 
     @Override
@@ -32,16 +41,20 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new DuplicateApplicationException("You have already applied for this job");
         }
 
+        JobResponse job = jobGrpcClient.getJobById(request.getJobId().toString());
+        UUID employerId = UUID.fromString(job.getEmployerId());
+
         Application application = new Application();
         application.setCandidateId(candidateId);
         application.setJobId(request.getJobId());
-        application.setEmployerId(request.getEmployerId());
+        application.setEmployerId(employerId);
         application.setCoverLetter(request.getCoverLetter());
         application.setResumeUrl(request.getResumeUrl());
         application.setStatus(ApplicationStatus.PENDING);
         application.setAppliedAt(LocalDateTime.now());
 
         Application saved = applicationRepository.save(application);
+        applicationEventProducer.publishSubmitted(saved);
         return ApplicationMapper.toResponse(saved);
     }
 
@@ -73,10 +86,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ApplicationNotFoundException("Application not found with ID: " + id));
 
+        ApplicationStatus oldStatus = application.getStatus();
         application.setStatus(status);
         application.setUpdatedAt(LocalDateTime.now());
 
         Application updated = applicationRepository.save(application);
+        applicationEventProducer.publishStatusChanged(updated, oldStatus);
         return ApplicationMapper.toResponse(updated);
     }
 
