@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: api-gateway:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SERVICES_AUTH_SERVICE_URL
+              value: http://auth-service:8081
+            - name: SERVICES_JOB_SERVICE_URL
+              value: http://job-service:8080
+            - name: SERVICES_APPLICATION_SERVICE_URL
+              value: http://application-service:8082
