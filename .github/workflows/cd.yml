@@ -23,19 +23,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify minikube is running
-        shell: pwsh
+        shell: powershell
         run: minikube status
 
       - name: Build ${{ matrix.service }} image into minikube
-        shell: pwsh
+        shell: powershell
         run: |
           minikube -p minikube docker-env --shell powershell | Invoke-Expression
           docker build -t ${{ matrix.service }}:local ./${{ matrix.service }}
 
       - name: Deploy ${{ matrix.service }} to Kubernetes
-        shell: pwsh
+        shell: powershell
         run: kubectl apply -f ${{ matrix.service }}/k8s/
 
       - name: Roll out ${{ matrix.service }}
-        shell: pwsh
+        shell: powershell
         run: kubectl rollout restart deployment/${{ matrix.service }}
