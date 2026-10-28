@@ -2,9 +2,9 @@ POST http://localhost:8083/auth/register
 Content-Type: application/json
 
 {
-  "email": "matching.test@gmail.com",
-  "password": "Password123",
-  "firstName": "Matching",
+  "email": "abcd@gmail.com",
+  "password": "Password",
+  "firstName": "testing",
   "lastName": "Tester",
   "userType": "CANDIDATE"
 }

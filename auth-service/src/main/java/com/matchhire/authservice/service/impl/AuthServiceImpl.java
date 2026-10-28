@@ -74,7 +74,10 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found with ID: " + id));
 
-        if (request.getEmail() != null) user.setEmail(request.getEmail());
+        if (request.getEmail() != null) {
+            // should verify before setting
+            user.setEmail(request.getEmail());
+        }
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
         if (request.getLastName() != null) user.setLastName(request.getLastName());
         if (request.getBio() != null) user.setBio(request.getBio());

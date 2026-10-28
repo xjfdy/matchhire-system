@@ -2,6 +2,7 @@ package com.matchhire.jobservice.service;
 
 import com.matchhire.jobservice.dto.JobRequest;
 import com.matchhire.jobservice.dto.JobResponse;
+import com.matchhire.jobservice.model.JobType;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +19,8 @@ public interface JobService {
     JobResponse updateJob(UUID id, JobRequest jobRequest);
 
     void deleteJob(UUID id);
+
+    Page<JobResponse> getJobsByConditions(
+            String title, Boolean remote, JobType jobType, Integer minSalary, Integer maxSalary,
+            String sortBy, String direction, int page, int size);
 }

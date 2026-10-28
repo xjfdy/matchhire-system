@@ -9,11 +9,13 @@ public class JobSpecifications {
     public static Specification<Jobs> hasTitleContaining(String title) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title.toLowerCase() + "%");
+        // ex. WHERE LOWER(title) LIKE '%java%'
     }
 
     public static Specification<Jobs> hasJobType(JobType jobType) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("jobType"), jobType);
+        // ex. WHERE job_type = ?
     }
 
     public static Specification<Jobs> hasRemote(Boolean remote) {
