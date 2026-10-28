@@ -3,6 +3,7 @@ package com.matchhire.jobservice.controller;
 import com.matchhire.jobservice.dto.JobRequest;
 import com.matchhire.jobservice.dto.JobResponse;
 import com.matchhire.jobservice.dto.validator.CreateJobValidationGroup;
+import com.matchhire.jobservice.model.JobType;
 import com.matchhire.jobservice.service.JobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,11 +11,9 @@ import jakarta.validation.groups.Default;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,6 +48,24 @@ public class JobController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Page<JobResponse> jobs = jobService.getAllJobs(page, size);
+        return ResponseEntity.ok().body(jobs);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Filter")
+    public ResponseEntity<Page<JobResponse>> searchJobsByTitle(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Boolean remote,
+            @RequestParam(required = false) JobType jobType,
+            @RequestParam(required = false) Integer minSalary,
+            @RequestParam(required = false) Integer maxSalary,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String sortBy
+    ) {
+        Page<JobResponse> jobs = jobService.getJobsByConditions(
+                title, remote, jobType, minSalary, maxSalary, sortBy, direction, page, size);
         return ResponseEntity.ok().body(jobs);
     }
 

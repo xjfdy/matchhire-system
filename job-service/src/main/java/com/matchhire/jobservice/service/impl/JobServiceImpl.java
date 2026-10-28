@@ -4,12 +4,16 @@ import com.matchhire.jobservice.dto.JobRequest;
 import com.matchhire.jobservice.dto.JobResponse;
 import com.matchhire.jobservice.exception.JobNotFoundException;
 import com.matchhire.jobservice.mapper.JobMapper;
+import com.matchhire.jobservice.model.JobType;
 import com.matchhire.jobservice.model.Jobs;
 import com.matchhire.jobservice.repository.JobRepository;
 import com.matchhire.jobservice.service.JobService;
+import com.matchhire.jobservice.specification.JobSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -71,5 +75,24 @@ public class JobServiceImpl implements JobService {
             throw new JobNotFoundException("Job not found with ID: " + id);
         }
         jobRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<JobResponse> getJobsByConditions(String title, Boolean remote, JobType jobType,
+                                                 Integer minSalary, Integer maxSalary,
+                                                 String sortBy, String direction, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Direction.fromString(direction), sortBy));
+
+        Specification<Jobs> spec = (root, query, cb) -> cb.conjunction();
+
+        if (title != null && !title.isBlank()) spec = spec.and(JobSpecifications.hasTitleContaining(title));
+        if (remote != null)    spec = spec.and(JobSpecifications.hasRemote(remote));
+        if (jobType != null)   spec = spec.and(JobSpecifications.hasJobType(jobType));
+        if (minSalary != null) spec = spec.and(JobSpecifications.hasMinSalaryGreaterThanOrEqual(minSalary));
+        if (maxSalary != null) spec = spec.and(JobSpecifications.hasMaxSalaryLessThanOrEqual(maxSalary));
+
+        return jobRepository.findAll(spec, pageable).map(JobMapper::toDTO);
     }
 }
