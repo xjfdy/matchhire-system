@@ -75,7 +75,7 @@ public class JobController {
     public ResponseEntity<JobResponse> updateJob(
             @RequestHeader("X-User-Id") UUID employerId,
             @PathVariable UUID id,
-            @RequestBody JobRequest jobRequest) {
+            @Validated @RequestBody JobRequest jobRequest) {
         JobResponse jobResponse = jobService.updateJob(id, jobRequest, employerId);
         return ResponseEntity.ok().body(jobResponse);
     }
