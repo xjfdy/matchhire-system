@@ -21,6 +21,9 @@ public class GatewayConfig {
     @Value("${services.application-service.url:http://localhost:8082}")
     private String applicationServiceUrl;
 
+    @Value("${services.matching-service.url:http://localhost:8084}")
+    private String matchingServiceUrl;
+
     @Bean
     public RouterFunction<ServerResponse> authServiceRoute() {
         return GatewayRouterFunctions.route("auth-service")
@@ -42,6 +45,14 @@ public class GatewayConfig {
         return GatewayRouterFunctions.route("application-service")
                 .route(RequestPredicates.path("/applications/**"),
                         HandlerFunctions.http(applicationServiceUrl))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> matchingServiceRoute() {
+        return GatewayRouterFunctions.route("matching-service")
+                .route(RequestPredicates.path("/matching/**"),
+                        HandlerFunctions.http(matchingServiceUrl))
                 .build();
     }
 }
