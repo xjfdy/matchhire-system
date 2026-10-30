@@ -1,7 +1,16 @@
-### Get current user profile
-GET http://localhost:8081/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJDQU5ESURBVEUiLCJpZCI6IjhiZjVmYzg0LWYxOTctNDU1OS1hMGQxLTlmNTZkNGVmYjI3OSIsImlhdCI6MTc4MzIwMzkyNCwiZXhwIjoxNzgzMjM5OTI0fQ.K37CfMk2cKgs__QziG2VMPwEL9GvNL31Hc3-lIgK29Y
+### Candidate profile -> saves candidateId (for matching)
+GET http://localhost:8083/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW1vLmNhbmRpZGF0ZUBtYXRjaGhpcmUuY29tIiwicm9sZSI6IkNBTkRJREFURSIsImlkIjoiN2ZkYzk2MTMtNzIyNi00NTQ0LWFmN2QtYWYzODAxYWIyNjA3IiwiaWF0IjoxNzkzMzEzMzY2LCJleHAiOjE3OTMzNDkzNjZ9.zwiJigy4d_UG9tvWnxE8U1CyS-SFfyHZa293Zrb3pBE
 
-### Get current user profile with wrong token
-GET http://localhost:8081/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXRjaGluZy50ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJDQU5ESURBVEUiLCJpZCI6IjViOTRjYmJiLTBkOTctNGY1OC05OWVjLWFkNTlkMGI5YzM2NCIsImlhdCI6MTc4MzUzNjgxMywiZXhwIjoxNzgzNTcyODEzfQ.-GuT8HE1OWInMAN3mqpI43S-r1pHjaNvCKgVW94a344
+> {% client.global.set("candidateId", response.body.id); %}
+
+### Employer profile
+GET http://localhost:8083/auth/me
+Authorization: Bearer {{employerToken}}
+
+### No token -> 401 (blocked by gateway)
+GET http://localhost:8083/auth/me
+
+### Fake token -> 401
+GET http://localhost:8083/auth/me
+Authorization: Bearer abc.def.ghi

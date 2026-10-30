@@ -1,2 +1,6 @@
-###
-GET http://localhost:8084/matching/candidates/5b94cbbb-0d97-4f58-99ec-ad59d0b9c364/recommended-jobs
+### Recommended jobs for the logged-in candidate (through the gateway)
+GET http://localhost:8083/matching/recommended-jobs
+Authorization: Bearer {{candidateToken}}
+
+### No token -> 401
+GET http://localhost:8083/matching/recommended-jobs

@@ -1,47 +1,48 @@
-### Job 1 - Java backend, overlaps with candidate skills
-POST http://localhost:8080/jobs
-Content-Type: application/json
-
-{
-  "title": "Backend Software Engineer",
-  "location": "Toronto, ON",
-  "jobType": "FULL_TIME",
-  "minSalary": 80000,
-  "maxSalary": 110000,
-  "description": "Looking for a backend engineer with Java and Spring experience.",
-  "remote": true,
-  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
-  "requiredSkills": ["Java", "Spring", "SQL"]
-}
-
-### Job 2 - full overlap, should score highest
-POST http://localhost:8080/jobs
+### Job 1 -> saves jobId
+POST http://localhost:8083/jobs
+Authorization: Bearer {{employerToken}}
 Content-Type: application/json
 
 {
   "title": "Java Microservices Developer",
-  "location": "Remote",
+  "location": "Toronto, ON",
   "jobType": "FULL_TIME",
   "minSalary": 90000,
   "maxSalary": 130000,
-  "description": "Build and maintain microservices using Java, Spring Boot, and Kafka.",
+  "description": "Build microservices with Java, Spring Boot and Kafka.",
   "remote": true,
-  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
   "requiredSkills": ["Java", "Spring", "Kafka"]
 }
 
-### Job 3 - no overlap, should score 0
-POST http://localhost:8080/jobs
+> {% client.global.set("jobId", response.body.id); %}
+
+### Job 2 -> saves jobId2
+POST http://localhost:8083/jobs
+Authorization: Bearer {{employerToken}}
 Content-Type: application/json
 
 {
   "title": "Frontend Developer",
   "location": "Vancouver, BC",
-  "jobType": "FULL_TIME",
+  "jobType": "CONTRACT",
   "minSalary": 70000,
   "maxSalary": 100000,
-  "description": "Looking for a frontend developer skilled in React and TypeScript.",
+  "description": "React and TypeScript.",
   "remote": false,
-  "employerId": "d6af2f2e-a515-4e84-bb68-8573118e0590",
-  "requiredSkills": ["React", "TypeScript", "CSS"]
+  "requiredSkills": ["React", "TypeScript"]
+}
+
+> {% client.global.set("jobId2", response.body.id); %}
+
+### Missing description -> 400
+POST http://localhost:8083/jobs
+Authorization: Bearer {{employerToken}}
+Content-Type: application/json
+
+{
+  "title": "Invalid Job",
+  "location": "Toronto, ON",
+  "jobType": "FULL_TIME",
+  "minSalary": 50000,
+  "maxSalary": 60000
 }

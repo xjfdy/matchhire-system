@@ -1,4 +1,7 @@
-### GET request to example server
-GET http://localhost:8080/jobs/search?title=Frontend&page=0&size=5&direction=ASC&sortBy=createdAt
+### Title only
+GET http://localhost:8083/jobs/search?title=java
+Authorization: Bearer {{candidateToken}}
 
-###
+### All filters + sort
+GET http://localhost:8083/jobs/search?title=java&remote=true&jobType=FULL_TIME&minSalary=80000&sortBy=minSalary&direction=DESC&page=0&size=5
+Authorization: Bearer {{candidateToken}}

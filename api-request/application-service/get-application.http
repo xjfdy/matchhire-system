@@ -1,12 +1,11 @@
-#GET http://localhost:8082/applications/my
-#X-User-Id: 504ccf4a-e5f0-4dc9-837c-a95a5008adb8
-#
+### Candidate: my applications
+GET http://localhost:8083/applications/my
+Authorization: Bearer {{candidateToken}}
 
-POST http://localhost:8082/applications
-Content-Type: application/json
-X-User-Id: 504ccf4a-e5f0-4dc9-837c-a95a5008adb8
+### Employer: applications for my job
+GET http://localhost:8083/applications/job/{{jobId}}
+Authorization: Bearer {{employerToken}}
 
-{
-  "jobId": "9250cb60-9013-4417-b21c-085ad31aec41",
-  "coverLetter": "I am interested in this position."
-}
+### Employer views one application
+GET http://localhost:8083/applications/{{applicationId}}
+Authorization: Bearer {{employerToken}}

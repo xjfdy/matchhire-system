@@ -1,13 +1,30 @@
-### Update a job - replace {id} with an actual job id from your DB
-PUT http://localhost:8080/jobs/a298992f-e126-4ca3-81f0-84d232fd2fcf
+### Owner updates -> 200
+PUT http://localhost:8083/jobs/{{jobId}}
+Authorization: Bearer {{employerToken}}
 Content-Type: application/json
 
 {
-  "title": "Senior Java Developer Updated",
-  "location": "Los Angeles, CA",
+  "title": "Senior Java Microservices Developer",
+  "location": "Toronto, ON",
   "jobType": "FULL_TIME",
-  "minSalary": 100000,
+  "minSalary": 110000,
   "maxSalary": 150000,
-  "description": "Updated description. Looking for a Senior Java Developer with 5+ years of experience.",
-  "remote": false
+  "description": "Build microservices with Java, Spring Boot and Kafka. 5+ years.",
+  "remote": true,
+  "requiredSkills": ["Java", "Spring", "Kafka"]
+}
+
+### Not the owner -> 403
+PUT http://localhost:8083/jobs/{{jobId}}
+Authorization: Bearer {{candidateToken}}
+Content-Type: application/json
+
+{
+  "title": "Hacked",
+  "location": "Nowhere",
+  "jobType": "FULL_TIME",
+  "minSalary": 1,
+  "maxSalary": 2,
+  "description": "x",
+  "remote": true
 }

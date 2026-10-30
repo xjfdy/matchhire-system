@@ -1,1 +1,7 @@
-PUT http://localhost:8082/applications/89d531f7-94cc-48d8-b60d-86524d78c0e5/status?status=REVIEWED
+### Candidate tries to accept own application -> 403
+PUT http://localhost:8083/applications/{{applicationId}}/status?status=ACCEPTED
+Authorization: Bearer {{candidateToken}}
+
+### Employer -> 200 (then check the notification-service console for the Kafka event)
+PUT http://localhost:8083/applications/{{applicationId}}/status?status=REVIEWED
+Authorization: Bearer {{employerToken}}
