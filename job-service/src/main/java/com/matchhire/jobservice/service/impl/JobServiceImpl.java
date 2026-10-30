@@ -3,6 +3,7 @@ package com.matchhire.jobservice.service.impl;
 import com.matchhire.jobservice.dto.JobRequest;
 import com.matchhire.jobservice.dto.JobResponse;
 import com.matchhire.jobservice.exception.JobNotFoundException;
+import com.matchhire.jobservice.exception.UnauthorizedException;
 import com.matchhire.jobservice.mapper.JobMapper;
 import com.matchhire.jobservice.model.JobType;
 import com.matchhire.jobservice.model.Jobs;
@@ -28,8 +29,9 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponse createJob(JobRequest jobRequest) {
+    public JobResponse createJob(JobRequest jobRequest, UUID employerId) {
         Jobs job = JobMapper.toModel(jobRequest);
+        job.setEmployerId(employerId);
         job.setCreatedAt(LocalDate.now());
         job.setUpdatedAt(LocalDate.now());
         Jobs savedJob = jobRepository.save(job);
@@ -52,9 +54,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponse updateJob(UUID id, JobRequest jobRequest) {
+    public JobResponse updateJob(UUID id, JobRequest jobRequest, UUID employerId) {
         Jobs job = jobRepository.findById(id)
                 .orElseThrow(() -> new JobNotFoundException("Job not found with ID: " + id));
+        checkOwner(job, employerId);
         job.setTitle(jobRequest.getTitle());
         job.setLocation(jobRequest.getLocation());
         job.setJobType(jobRequest.getJobType());
@@ -70,11 +73,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public void deleteJob(UUID id) {
-        if (!jobRepository.existsById(id)) {
-            throw new JobNotFoundException("Job not found with ID: " + id);
-        }
-        jobRepository.deleteById(id);
+    public void deleteJob(UUID id, UUID employerId) {
+        Jobs job = jobRepository.findById(id)
+                .orElseThrow(() -> new JobNotFoundException("Job not found with ID: " + id));
+        checkOwner(job, employerId);
+        jobRepository.delete(job);
     }
 
     @Override
@@ -94,5 +97,11 @@ public class JobServiceImpl implements JobService {
         if (maxSalary != null) spec = spec.and(JobSpecifications.hasMaxSalaryLessThanOrEqual(maxSalary));
 
         return jobRepository.findAll(spec, pageable).map(JobMapper::toDTO);
+    }
+
+    private void checkOwner(Jobs job, UUID employerId) {
+        if (!job.getEmployerId().equals(employerId)) {
+            throw new UnauthorizedException("You can only modify jobs you posted");
+        }
     }
 }

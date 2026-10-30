@@ -12,11 +12,11 @@ public interface ApplicationService {
 
     List<ApplicationResponse> getMyApplications(UUID candidateId);
 
-    List<ApplicationResponse> getApplicationsByJobId(UUID jobId);
+    List<ApplicationResponse> getApplicationsByJobId(UUID jobId, UUID employerId);
 
-    ApplicationResponse getApplicationById(UUID id);
+    ApplicationResponse getApplicationById(UUID id, UUID userId);
 
-    ApplicationResponse updateStatus(UUID id, ApplicationStatus status);
+    ApplicationResponse updateStatus(UUID id, ApplicationStatus status, UUID employerId);
 
     void withdraw(UUID id, UUID candidateId);
 }

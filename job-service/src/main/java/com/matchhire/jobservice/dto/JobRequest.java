@@ -23,7 +23,6 @@ public class JobRequest {
     @NotNull
     private JobType jobType;
 
-    @NotNull
     private UUID employerId;
 
     @Positive(message = "Min salary must be positive")

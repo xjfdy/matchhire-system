@@ -46,10 +46,10 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("Invalid Email or Password"));
+                .orElseThrow(() -> new UserNotFoundException("Invalid email"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid password");
         }
 
         String token = jwtUtil.generateToken(user.getId().toString(), user.getEmail(), user.getUserType().toString());

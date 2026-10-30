@@ -10,15 +10,15 @@ import java.util.UUID;
 
 @Service
 public interface JobService {
-    JobResponse createJob(JobRequest jobRequest);
+    JobResponse createJob(JobRequest jobRequest, UUID employerId);
 
     JobResponse getJobById(UUID id);
 
     Page<JobResponse> getAllJobs(int page, int size);
 
-    JobResponse updateJob(UUID id, JobRequest jobRequest);
+    JobResponse updateJob(UUID id, JobRequest jobRequest, UUID employerId);
 
-    void deleteJob(UUID id);
+    void deleteJob(UUID id, UUID employerId);
 
     Page<JobResponse> getJobsByConditions(
             String title, Boolean remote, JobType jobType, Integer minSalary, Integer maxSalary,

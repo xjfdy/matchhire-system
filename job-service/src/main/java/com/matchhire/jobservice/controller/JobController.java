@@ -30,8 +30,9 @@ public class JobController {
     @PostMapping
     @Operation(summary = "Create a new job post")
     public ResponseEntity<JobResponse> createJob(
+            @RequestHeader("X-User-Id") UUID employerId,
             @Validated({Default.class, CreateJobValidationGroup.class}) @RequestBody JobRequest jobRequest) {
-        JobResponse jobResponse = jobService.createJob(jobRequest);
+        JobResponse jobResponse = jobService.createJob(jobRequest, employerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(jobResponse);
     }
 
@@ -72,16 +73,19 @@ public class JobController {
     @PutMapping("/{id}")
     @Operation(summary = "Update a job")
     public ResponseEntity<JobResponse> updateJob(
+            @RequestHeader("X-User-Id") UUID employerId,
             @PathVariable UUID id,
             @RequestBody JobRequest jobRequest) {
-        JobResponse jobResponse = jobService.updateJob(id, jobRequest);
+        JobResponse jobResponse = jobService.updateJob(id, jobRequest, employerId);
         return ResponseEntity.ok().body(jobResponse);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a job")
-    public ResponseEntity<Void> deleteJob(@PathVariable UUID id) {
-        jobService.deleteJob(id);
+    public ResponseEntity<Void> deleteJob(
+            @RequestHeader("X-User-Id") UUID employerId,
+            @PathVariable UUID id) {
+        jobService.deleteJob(id, employerId);
         return ResponseEntity.noContent().build();
     }
 }
