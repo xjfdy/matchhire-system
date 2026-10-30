@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -114,9 +115,64 @@ public class ApplicationServiceImplTest {
         when(applicationRepository.save(any(Application.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        applicationService.updateStatus(applicationId, ApplicationStatus.REVIEWED);
+        applicationService.updateStatus(applicationId, ApplicationStatus.REVIEWED, application.getEmployerId());
 
         verify(applicationEventProducer).publishStatusChanged(any(Application.class), eq(ApplicationStatus.PENDING));
+    }
+
+    @Test
+    void updateStatus_whenNotJobEmployer_throwsUnauthorizedAndDoesNotSave() {
+        Application application = pendingApplication();
+        when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
+
+        // e.g. the candidate trying to accept their own application
+        assertThrows(UnauthorizedException.class, () -> applicationService.updateStatus(
+                application.getId(), ApplicationStatus.ACCEPTED, application.getCandidateId()));
+
+        verify(applicationRepository, never()).save(any());
+        verify(applicationEventProducer, never()).publishStatusChanged(any(), any());
+    }
+
+    @Test
+    void getApplicationById_whenCandidateOrEmployer_returnsApplication() {
+        Application application = pendingApplication();
+        when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
+
+        assertEquals(application.getId().toString(),
+                applicationService.getApplicationById(application.getId(), application.getCandidateId()).getId());
+        assertEquals(application.getId().toString(),
+                applicationService.getApplicationById(application.getId(), application.getEmployerId()).getId());
+    }
+
+    @Test
+    void getApplicationById_whenSomeoneElse_throwsUnauthorized() {
+        Application application = pendingApplication();
+        when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
+
+        assertThrows(UnauthorizedException.class,
+                () -> applicationService.getApplicationById(application.getId(), UUID.randomUUID()));
+    }
+
+    @Test
+    void getApplicationsByJobId_onlyQueriesTheCallersOwnJobs() {
+        UUID jobId = UUID.randomUUID();
+        UUID employerId = UUID.randomUUID();
+        when(applicationRepository.findByJobIdAndEmployerId(jobId, employerId)).thenReturn(List.of());
+
+        applicationService.getApplicationsByJobId(jobId, employerId);
+
+        verify(applicationRepository).findByJobIdAndEmployerId(jobId, employerId);
+    }
+
+    private Application pendingApplication() {
+        Application application = new Application();
+        application.setId(UUID.randomUUID());
+        application.setCandidateId(UUID.randomUUID());
+        application.setJobId(UUID.randomUUID());
+        application.setEmployerId(UUID.randomUUID());
+        application.setStatus(ApplicationStatus.PENDING);
+        application.setAppliedAt(java.time.LocalDateTime.now());
+        return application;
     }
 
     @Test

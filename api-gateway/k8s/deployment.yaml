@@ -25,3 +25,5 @@ spec:
               value: http://job-service:8080
             - name: SERVICES_APPLICATION_SERVICE_URL
               value: http://application-service:8082
+            - name: SERVICES_MATCHING_SERVICE_URL
+              value: http://matching-service:8084

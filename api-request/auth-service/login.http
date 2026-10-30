@@ -1,7 +1,30 @@
+### Login employer -> saves employerToken
 POST http://localhost:8083/auth/login
 Content-Type: application/json
 
 {
-  "email": "matching.test@gmail.com",
+  "email": "demo.employer@matchhire.com",
   "password": "Password123"
+}
+
+> {% client.global.set("employerToken", response.body.token); %}
+
+### Login candidate -> saves candidateToken
+POST http://localhost:8083/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo.candidate@matchhire.com",
+  "password": "Password123"
+}
+
+> {% client.global.set("candidateToken", response.body.token); %}
+
+### Wrong password -> 401
+POST http://localhost:8083/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo.candidate@matchhire.com",
+  "password": "WrongPassword"
 }

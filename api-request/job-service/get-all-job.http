@@ -1,8 +1,11 @@
-### Get all jobs - default page 0, size 10
-GET http://localhost:8080/jobs
+### All jobs, paged
+GET http://localhost:8083/jobs?page=0&size=5
+Authorization: Bearer {{candidateToken}}
 
-### Get all jobs - page 0, size 5
-GET http://localhost:8080/jobs?page=0&size=5
+### Get by id
+GET http://localhost:8083/jobs/{{jobId}}
+Authorization: Bearer {{candidateToken}}
 
-### Get all jobs - second page
-GET http://localhost:8080/jobs?page=1&size=5
+### Not found -> 404
+GET http://localhost:8083/jobs/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{candidateToken}}

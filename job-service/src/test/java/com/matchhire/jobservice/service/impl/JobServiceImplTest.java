@@ -3,6 +3,7 @@ package com.matchhire.jobservice.service.impl;
 import com.matchhire.jobservice.dto.JobRequest;
 import com.matchhire.jobservice.dto.JobResponse;
 import com.matchhire.jobservice.exception.JobNotFoundException;
+import com.matchhire.jobservice.exception.UnauthorizedException;
 import com.matchhire.jobservice.model.JobType;
 import com.matchhire.jobservice.model.Jobs;
 import com.matchhire.jobservice.repository.JobRepository;
@@ -43,19 +44,24 @@ class JobServiceImplTest {
     // ---------- create ----------
 
     @Test
-    void createJob_setsTimestampsAndSaves() {
+    void createJob_usesEmployerIdFromToken_notFromBody() {
+        UUID loggedInEmployer = UUID.randomUUID();
+        JobRequest request = jobRequest("Java Developer");
+        request.setEmployerId(UUID.randomUUID());   // someone else's ID in the body
         when(jobRepository.save(any(Jobs.class))).thenAnswer(inv -> {
             Jobs job = inv.getArgument(0);
-            job.setId(UUID.randomUUID());   // mock the DB generating an ID
+            job.setId(UUID.randomUUID());   // simulate the DB generating an ID
             return job;
         });
 
-        JobResponse response = jobService.createJob(jobRequest("Java Developer"));
+        JobResponse response = jobService.createJob(request, loggedInEmployer);
 
         ArgumentCaptor<Jobs> captor = ArgumentCaptor.forClass(Jobs.class);
         verify(jobRepository).save(captor.capture());
-        assertEquals(LocalDate.now(), captor.getValue().getCreatedAt());
-        assertEquals(LocalDate.now(), captor.getValue().getUpdatedAt());
+        Jobs saved = captor.getValue();
+        assertEquals(loggedInEmployer, saved.getEmployerId());
+        assertEquals(LocalDate.now(), saved.getCreatedAt());
+        assertEquals(LocalDate.now(), saved.getUpdatedAt());
         assertEquals("Java Developer", response.getTitle());
         assertNotNull(response.getId());
     }
@@ -77,20 +83,32 @@ class JobServiceImplTest {
         UUID id = UUID.randomUUID();
         when(jobRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(JobNotFoundException.class, () -> jobService.updateJob(id, jobRequest("New title")));
+        assertThrows(JobNotFoundException.class,
+                () -> jobService.updateJob(id, jobRequest("New title"), UUID.randomUUID()));
         verify(jobRepository, never()).save(any());
     }
 
     @Test
-    void updateJob_whenFound_updatesFieldsAndSaves() {
+    void updateJob_whenOwner_updatesFieldsAndSaves() {
         Jobs existing = existingJob("Old title");
         when(jobRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
         when(jobRepository.save(any(Jobs.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        JobResponse response = jobService.updateJob(existing.getId(), jobRequest("New title"));
+        JobResponse response = jobService.updateJob(
+                existing.getId(), jobRequest("New title"), existing.getEmployerId());
 
         assertEquals("New title", response.getTitle());
         assertEquals(LocalDate.now(), existing.getUpdatedAt());
+    }
+
+    @Test
+    void updateJob_whenNotOwner_throwsUnauthorizedAndDoesNotSave() {
+        Jobs existing = existingJob("Old title");
+        when(jobRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
+
+        assertThrows(UnauthorizedException.class,
+                () -> jobService.updateJob(existing.getId(), jobRequest("Hacked"), UUID.randomUUID()));
+        verify(jobRepository, never()).save(any());
     }
 
     // ---------- delete ----------
@@ -98,20 +116,30 @@ class JobServiceImplTest {
     @Test
     void deleteJob_whenNotFound_throwsAndDoesNotDelete() {
         UUID id = UUID.randomUUID();
-        when(jobRepository.existsById(id)).thenReturn(false);
+        when(jobRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(JobNotFoundException.class, () -> jobService.deleteJob(id));
-        verify(jobRepository, never()).deleteById(any());
+        assertThrows(JobNotFoundException.class, () -> jobService.deleteJob(id, UUID.randomUUID()));
+        verify(jobRepository, never()).delete(any(Jobs.class));
     }
 
     @Test
-    void deleteJob_whenFound_deletes() {
-        UUID id = UUID.randomUUID();
-        when(jobRepository.existsById(id)).thenReturn(true);
+    void deleteJob_whenOwner_deletes() {
+        Jobs existing = existingJob("Java Developer");
+        when(jobRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
 
-        jobService.deleteJob(id);
+        jobService.deleteJob(existing.getId(), existing.getEmployerId());
 
-        verify(jobRepository).deleteById(id);
+        verify(jobRepository).delete(existing);
+    }
+
+    @Test
+    void deleteJob_whenNotOwner_throwsUnauthorizedAndDoesNotDelete() {
+        Jobs existing = existingJob("Java Developer");
+        when(jobRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
+
+        assertThrows(UnauthorizedException.class,
+                () -> jobService.deleteJob(existing.getId(), UUID.randomUUID()));
+        verify(jobRepository, never()).delete(any(Jobs.class));
     }
 
     // ---------- search ----------
@@ -142,7 +170,6 @@ class JobServiceImplTest {
         request.setTitle(title);
         request.setLocation("Toronto");
         request.setJobType(JobType.FULL_TIME);
-        request.setEmployerId(UUID.randomUUID());
         request.setMinSalary(60000);
         request.setMaxSalary(80000);
         request.setDescription("Build backend services");

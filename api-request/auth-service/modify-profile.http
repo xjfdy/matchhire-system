@@ -1,9 +1,8 @@
-### GET request to example server
-PUT http://localhost:8081/auth/modify-profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXRjaGluZy50ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJDQU5ESURBVEUiLCJpZCI6IjViOTRjYmJiLTBkOTctNGY1OC05OWVjLWFkNTlkMGI5YzM2NCIsImlhdCI6MTc4MzUzNjgxMywiZXhwIjoxNzgzNTcyODEzfQ.-GuT8HE1OWInMAN3mqpI43S-r1pHjaNvCKgVW94a344
+PUT http://localhost:8083/auth/modify-profile
+Authorization: Bearer {{candidateToken}}
 Content-Type: application/json
 
 {
-  "skills": ["Java", "Spring", "SQL"]
+  "bio": "Backend developer, Java and Spring.",
+  "skills": ["Java", "Spring", "SQL", "Kafka"]
 }
-###

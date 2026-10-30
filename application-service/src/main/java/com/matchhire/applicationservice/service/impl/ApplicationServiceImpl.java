@@ -67,24 +67,30 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<ApplicationResponse> getApplicationsByJobId(UUID jobId) {
-        return applicationRepository.findByJobId(jobId)
-                .stream()
-                .map(ApplicationMapper::toResponse)
-                .toList();
+    public List<ApplicationResponse> getApplicationsByJobId(UUID jobId, UUID employerId) {
+        return applicationRepository.findByJobIdAndEmployerId(jobId, employerId)
+                .stream().map(ApplicationMapper::toResponse).toList();
     }
 
     @Override
-    public ApplicationResponse getApplicationById(UUID id) {
+    public ApplicationResponse getApplicationById(UUID id, UUID userId) {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ApplicationNotFoundException("Application not found with ID: " + id));
+        boolean isCandidate = application.getCandidateId().equals(userId);
+        boolean isEmployer = application.getEmployerId().equals(userId);
+        if (!isCandidate && !isEmployer) {
+            throw new UnauthorizedException("You are not allowed to view this application");
+        }
         return ApplicationMapper.toResponse(application);
     }
 
     @Override
-    public ApplicationResponse updateStatus(UUID id, ApplicationStatus status) {
+    public ApplicationResponse updateStatus(UUID id, ApplicationStatus status, UUID employerId) {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ApplicationNotFoundException("Application not found with ID: " + id));
+        if (!application.getEmployerId().equals(employerId)) {
+            throw new UnauthorizedException("Only the employer who posted this job can update its status");
+        }
 
         ApplicationStatus oldStatus = application.getStatus();
         application.setStatus(status);

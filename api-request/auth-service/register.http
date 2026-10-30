@@ -1,10 +1,36 @@
+### Register employer (409 if exists)
 POST http://localhost:8083/auth/register
 Content-Type: application/json
 
 {
-  "email": "abcd@gmail.com",
-  "password": "Password",
-  "firstName": "testing",
-  "lastName": "Tester",
+  "email": "demo.employer@matchhire.com",
+  "password": "Password123",
+  "firstName": "Demo",
+  "lastName": "Employer",
+  "userType": "EMPLOYER"
+}
+
+### Register candidate (409 if exists)
+POST http://localhost:8083/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo.candidate@matchhire.com",
+  "password": "Password123",
+  "firstName": "Demo",
+  "lastName": "Candidate",
+  "userType": "CANDIDATE",
+  "skills": ["Java", "Spring", "SQL"]
+}
+
+### Invalid data -> 400
+POST http://localhost:8083/auth/register
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "short",
+  "firstName": "",
+  "lastName": "X",
   "userType": "CANDIDATE"
 }

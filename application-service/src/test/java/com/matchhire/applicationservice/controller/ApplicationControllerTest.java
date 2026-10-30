@@ -41,6 +41,7 @@ class ApplicationControllerTest {
     private ApplicationService applicationService;
 
     private final UUID candidateId = UUID.randomUUID();
+    private final UUID employerId = UUID.randomUUID();
 
     // ---------- apply ----------
 
@@ -123,10 +124,10 @@ class ApplicationControllerTest {
     @Test
     void getApplicationById_whenNotFound_returns404() throws Exception {
         UUID id = UUID.randomUUID();
-        when(applicationService.getApplicationById(id))
+        when(applicationService.getApplicationById(id, candidateId))
                 .thenThrow(new ApplicationNotFoundException("Application not found"));
 
-        mockMvc.perform(get("/applications/{id}", id))
+        mockMvc.perform(get("/applications/{id}", id).header("X-User-Id", candidateId))
                 .andExpect(status().isNotFound());
     }
 
@@ -137,19 +138,48 @@ class ApplicationControllerTest {
         UUID id = UUID.randomUUID();
         ApplicationResponse response = new ApplicationResponse();
         response.setStatus("ACCEPTED");
-        when(applicationService.updateStatus(id, ApplicationStatus.ACCEPTED)).thenReturn(response);
+        when(applicationService.updateStatus(id, ApplicationStatus.ACCEPTED, employerId)).thenReturn(response);
 
-        mockMvc.perform(put("/applications/{id}/status", id).param("status", "ACCEPTED"))
+        mockMvc.perform(put("/applications/{id}/status", id)
+                        .header("X-User-Id", employerId)
+                        .param("status", "ACCEPTED"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("ACCEPTED"));
     }
 
     @Test
     void updateStatus_withInvalidStatus_returns400() throws Exception {
-        mockMvc.perform(put("/applications/{id}/status", UUID.randomUUID()).param("status", "HIRED"))
+        mockMvc.perform(put("/applications/{id}/status", UUID.randomUUID())
+                        .header("X-User-Id", employerId)
+                        .param("status", "HIRED"))
                 .andExpect(status().isBadRequest());
 
-        verify(applicationService, never()).updateStatus(any(), any());
+        verify(applicationService, never()).updateStatus(any(), any(), any());
+    }
+
+    @Test
+    void updateStatus_whenNotJobEmployer_returns403() throws Exception {
+        UUID id = UUID.randomUUID();
+        when(applicationService.updateStatus(id, ApplicationStatus.ACCEPTED, candidateId))
+                .thenThrow(new UnauthorizedException("Only the employer who posted this job can update its status"));
+
+        mockMvc.perform(put("/applications/{id}/status", id)
+                        .header("X-User-Id", candidateId)
+                        .param("status", "ACCEPTED"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void apply_whenJobDoesNotExist_returns404() throws Exception {
+        // gRPC NOT_FOUND from job-service now reaches GlobalExceptionHandler
+        when(applicationService.apply(eq(candidateId), any(ApplicationRequest.class)))
+                .thenThrow(Status.NOT_FOUND.withDescription("Job not found").asRuntimeException());
+
+        mockMvc.perform(post("/applications")
+                        .header("X-User-Id", candidateId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(applyJson(UUID.randomUUID())))
+                .andExpect(status().isNotFound());
     }
 
     // ---------- withdraw ----------

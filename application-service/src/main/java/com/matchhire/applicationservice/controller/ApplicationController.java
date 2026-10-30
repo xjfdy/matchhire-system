@@ -38,20 +38,24 @@ public class ApplicationController {
 
     @GetMapping("/job/{jobId}")
     public ResponseEntity<List<ApplicationResponse>> getApplicationsByJobId(
+            @RequestHeader("X-User-Id") UUID employerId,
             @PathVariable UUID jobId) {
-        return ResponseEntity.ok(applicationService.getApplicationsByJobId(jobId));
+        return ResponseEntity.ok(applicationService.getApplicationsByJobId(jobId, employerId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponse> getApplicationById(@PathVariable UUID id) {
-        return ResponseEntity.ok(applicationService.getApplicationById(id));
+    public ResponseEntity<ApplicationResponse> getApplicationById(
+            @RequestHeader("X-User-Id") UUID userId,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(applicationService.getApplicationById(id, userId));
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<ApplicationResponse> updateStatus(
             @PathVariable UUID id,
-            @RequestParam ApplicationStatus status) {
-        return ResponseEntity.ok(applicationService.updateStatus(id, status));
+            @RequestParam ApplicationStatus status,
+            @RequestHeader("X-User-Id") UUID employerId) {
+        return ResponseEntity.ok(applicationService.updateStatus(id, status, employerId));
     }
 
     @DeleteMapping("/{id}")
